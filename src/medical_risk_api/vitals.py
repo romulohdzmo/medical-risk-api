@@ -1,19 +1,17 @@
 """Clinical vitals analysis module with strict static typing."""
 
-from typing import Callable, Literal, TypeVar
+from collections.abc import Callable
+from typing import Literal
 
 # 1. Literal types (finite set of clinical states)
 MAPStatus = Literal["Hypotension", "Normal", "Hypertension"]
 BMICategory = Literal["Underweight", "Normal", "Overweight", "Obesity"]
 
-# 2. TypeVar for generic numeric handling
-T = TypeVar("T", int, float)
-
-# 3. Callable alias for metric adjustment functions
+# 2. Callable alias for metric adjustment functions
 MetricAdjuster = Callable[[float, float], float]
 
 
-def round_metric(value: T, decimals: int = 2) -> float:
+def round_metric[T: (int, float)](value: T, decimals: int = 2) -> float:
     """Rounds numeric value ensuring int/float compatibility."""
     return round(float(value), decimals)
 
