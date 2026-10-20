@@ -51,3 +51,10 @@ def test_compute_bmi_invalid_height_returns_422():
     payload = {"weight_kg": 70.0, "height_m": 3.2}
     response = client.post("/vitals/bmi", json=payload)
     assert response.status_code == 422
+
+
+def test_correlation_id_and_latency_headers_present():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert "X-Correlation-ID" in response.headers
+    assert "X-Process-Time-MS" in response.headers

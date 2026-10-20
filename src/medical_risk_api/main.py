@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI, HTTPException, status
 
+from medical_risk_api.middleware import ClinicalAuditMiddleware
 from medical_risk_api.schemas import (
     BloodPressureInput,
     BloodPressureOutput,
@@ -15,6 +16,9 @@ app = FastAPI(
     description="Microservice for physiological metrics and vital sign assessment.",
     version="0.1.0",
 )
+
+# Register clinical audit middleware
+app.add_middleware(ClinicalAuditMiddleware)
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
