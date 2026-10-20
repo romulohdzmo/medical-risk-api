@@ -58,3 +58,49 @@ def test_correlation_id_and_latency_headers_present():
     assert response.status_code == 200
     assert "X-Correlation-ID" in response.headers
     assert "X-Process-Time-MS" in response.headers
+
+
+def test_estimate_cardiovascular_risk_low():
+    payload = {
+        "age": 25,
+        "systolic_bp": 110.0,
+        "cholesterol_mg_dl": 160.0,
+        "fasting_blood_sugar_mg_dl": 85.0,
+        "bmi": 21.5,
+        "is_smoker": False,
+    }
+    response = client.post("/risk/cardiovascular", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["risk_category"] == "Low"
+    assert data["model_version"] == "1.0.0"
+    assert data["risk_score_percent"] < 5.0
+
+
+def test_estimate_cardiovascular_risk_high():
+    payload = {
+        "age": 75,
+        "systolic_bp": 175.0,
+        "cholesterol_mg_dl": 280.0,
+        "fasting_blood_sugar_mg_dl": 160.0,
+        "bmi": 34.0,
+        "is_smoker": True,
+    }
+    response = client.post("/risk/cardiovascular", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["risk_category"] == "High"
+    assert data["risk_score_percent"] >= 20.0
+
+
+def test_estimate_cardiovascular_risk_invalid_age_returns_422():
+    payload = {
+        "age": 15,  # Below minimum clinical threshold of 18
+        "systolic_bp": 120.0,
+        "cholesterol_mg_dl": 180.0,
+        "fasting_blood_sugar_mg_dl": 90.0,
+        "bmi": 22.0,
+        "is_smoker": False,
+    }
+    response = client.post("/risk/cardiovascular", json=payload)
+    assert response.status_code == 422
