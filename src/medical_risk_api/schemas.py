@@ -113,3 +113,19 @@ class CardiovascularRiskOutput(BaseModel):
         default_factory=list,
         description="Ranked clinical risk factors driving the probability score.",
     )
+
+
+class AssessmentAuditRecord(BaseModel):
+    id: int
+    correlation_id: str
+    timestamp: str
+    patient_age: int
+    systolic_bp: float
+    cholesterol_mg_dl: float
+    fasting_blood_sugar_mg_dl: float
+    bmi: float
+    is_smoker: bool
+    risk_score_percent: float
+    risk_category: str
+    model_version: str
+    top_risk_factors: list[FactorContribution]
