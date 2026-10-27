@@ -84,13 +84,14 @@ def compute_bmi(payload: BodyMassInput) -> BodyMassOutput:
 def estimate_cardiovascular_risk(
     payload: CardiovascularRiskInput,
 ) -> CardiovascularRiskOutput:
-    """Predicts 10-year cardiovascular risk probability using calibrated machine learning."""
+    """Predicts 10-year cardiovascular risk probability with clinical factor explainability."""
     try:
-        risk_score, category = predictor.predict_risk(payload)
+        risk_score, category, top_factors = predictor.predict_risk(payload)
         return CardiovascularRiskOutput(
             risk_score_percent=risk_score,
             risk_category=category,
             model_version=predictor.version,
+            top_risk_factors=top_factors,
         )
     except Exception as err:
         raise HTTPException(

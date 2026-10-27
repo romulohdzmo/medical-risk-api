@@ -104,3 +104,21 @@ def test_estimate_cardiovascular_risk_invalid_age_returns_422():
     }
     response = client.post("/risk/cardiovascular", json=payload)
     assert response.status_code == 422
+
+
+def test_estimate_cardiovascular_risk_explains_top_factors():
+    payload = {
+        "age": 62,
+        "systolic_bp": 160.0,
+        "cholesterol_mg_dl": 250.0,
+        "fasting_blood_sugar_mg_dl": 110.0,
+        "bmi": 30.0,
+        "is_smoker": True,
+    }
+    response = client.post("/risk/cardiovascular", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "top_risk_factors" in data
+    assert len(data["top_risk_factors"]) == 3
+    weights = [item["contribution_weight"] for item in data["top_risk_factors"]]
+    assert weights == sorted(weights, reverse=True)

@@ -94,6 +94,13 @@ class CardiovascularRiskInput(BaseModel):
     )
 
 
+class FactorContribution(BaseModel):
+    feature: str = Field(..., description="Clinical risk factor name.")
+    contribution_weight: float = Field(
+        ..., description="Standardized linear contribution score to log-odds."
+    )
+
+
 class CardiovascularRiskOutput(BaseModel):
     risk_score_percent: float = Field(
         ...,
@@ -102,3 +109,7 @@ class CardiovascularRiskOutput(BaseModel):
     )
     risk_category: Literal["Low", "Borderline", "Intermediate", "High"]
     model_version: str
+    top_risk_factors: list[FactorContribution] = Field(
+        default_factory=list,
+        description="Ranked clinical risk factors driving the probability score.",
+    )
